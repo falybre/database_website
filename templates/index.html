@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Incident Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .coords-container {
+            display: flex;
+            gap: 10px;
+        }
+        .coords-container div {
+            flex: 1;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .probability-bar {
+            height: 20px;
+            margin: 5px 0;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .probability-fill {
+            height: 100%;
+            background-color: #3498db;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .map-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Traffic Incident Prediction Tool</h1>
+
+
+    <div class="form-group">
+        <label for="location">Select Location</label>
+        <select id="location" onchange="updateCoordinates()">
+            <option value="makati_cbd" data-lat="14.5547" data-lng="121.0244">Makati CBD</option>
+            <option value="ortigas" data-lat="14.5832" data-lng="121.0614">Ortigas Center</option>
+            <option value="bgc" data-lat="14.5508" data-lng="121.0529">BGC</option>
+            <!-- Add more locations -->
+        </select>
+        
+        <!-- Hidden inputs that will be populated -->
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+    </div>
+    
+    <script>
+    function updateCoordinates() {
+        var select = document.getElementById('location');
+        var option = select.options[select.selectedIndex];
+        document.getElementById('latitude').value = option.dataset.lat;
+        document.getElementById('longitude').value = option.dataset.lng;
+    }
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', updateCoordinates);
+    </script>
+
+    
+    <div class="container">
+        {% if error %}
+        <div class="error">
+            <p><strong>Error:</strong> {{ error }}</p>
+        </div>
+        {% endif %}
+        
+        <form action="/predict" method="post" id="predictionForm">
+            <div class="form-group coords-container">
+                <div>
+                    <label for="latitude">Latitude</label>
+                    <input type="number" id="latitude" name="latitude" step="0.000001" required 
+                           value="{{ form_data.latitude if form_data else '14.590' }}">
+                </div>
+                
+                <div>
+                    <label for="longitude">Longitude</label>
+                    <input type="number" id="longitude" name="longitude" step="0.000001" required 
+                           value="{{ form_data.longitude if form_data else '121.050' }}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="city">City</label>
+                <select id="city" name="city" required>
+                    <option value="Quezon City" {% if form_data and form_data.city == 'Quezon City' %}selected{% endif %}>Quezon City</option>
+                    <option value="Makati City" {% if form_data and form_data.city == 'Makati City' %}selected{% endif %}>Makati City</option>
+                    <option value="Manila" {% if form_data and form_data.city == 'Manila' %}selected{% endif %}>Manila</option>
+                    <option value="Pasig City" {% if form_data and form_data.city == 'Pasig City' %}selected{% endif %}>Pasig City</option>
+                    <option value="Mandaluyong" {% if form_data and form_data.city == 'Mandaluyong' %}selected{% endif %}>Mandaluyong</option>
+                    <option value="Pasay City" {% if form_data and form_data.city == 'Pasay City' %}selected{% endif %}>Pasay City</option>
+                    <option value="Taguig" {% if form_data and form_data.city == 'Taguig' %}selected{% endif %}>Taguig</option>
+                    <option value="San Juan" {% if form_data and form_data.city == 'San Juan' %}selected{% endif %}>San Juan</option>
+                    <option value="Parañaque" {% if form_data and form_data.city == 'Parañaque' %}selected{% endif %}>Parañaque</option>
+                    <option value="Marikina" {% if form_data and form_data.city == 'Marikina' %}selected{% endif %}>Marikina</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="hour">Hour of Day (0-23)</label>
+                <input type="number" id="hour" name="hour" min="0" max="23" required
+                       value="{{ form_data.hour if form_data else '8' }}" onchange="updateRushHour()">
+            </div>
+            
+            <div class="form-group">
+                <label for="day_of_week">Day of Week</label>
+                <select id="day_of_week" name="day_of_week" required onchange="updateWeekend()">
+                    <option value="0" {% if form_data and form_data.day_of_week == '0' %}selected{% endif %}>Monday</option>
+                    <option value="1" {% if form_data and form_data.day_of_week == '1' %}selected{% endif %}>Tuesday</option>
+                    <option value="2" {% if form_data and form_data.day_of_week == '2' %}selected{% endif %}>Wednesday</option>
+                    <option value="3" {% if form_data and form_data.day_of_week == '3' %}selected{% endif %}>Thursday</option>
+                    <option value="4" {% if form_data and form_data.day_of_week == '4' %}selected{% endif %}>Friday</option>
+                    <option value="5" {% if form_data and form_data.day_of_week == '5' %}selected{% endif %}>Saturday</option>
+                    <option value="6" {% if form_data and form_data.day_of_week == '6' %}selected{% endif %}>Sunday</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="is_weekend">Is Weekend?</label>
+                <select id="is_weekend" name="is_weekend" required>
+                    <option value="0" {% if form_data and form_data.is_weekend == '0' %}selected{% endif %}>No</option>
+                    <option value="1" {% if form_data and form_data.is_weekend == '1' %}selected{% endif %}>Yes</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="is_rush_hour">Is Rush Hour?</label>
+                <select id="is_rush_hour" name="is_rush_hour" required>
+                    <option value="0" {% if form_data and form_data.is_rush_hour == '0' %}selected{% endif %}>No</option>
+                    <option value="1" {% if form_data and form_data.is_rush_hour == '1' %}selected{% endif %}>Yes</option>
+                </select>
+            </div>
+            
+            <button type="submit">Predict Traffic Incident</button>
+        </form>
+        
+        {% if prediction %}
+        <div class="result">
+            <h2>Prediction Results</h2>
+            <p><strong>Predicted Incident Type:</strong> {{ prediction }}</p>
+            
+            {% if probabilities %}
+            <h3>Probability Breakdown:</h3>
+            {% for incident, prob in probabilities.items() %}
+            <div>
+                <strong>{{ incident }}:</strong> {{ prob }}%
+                <div class="probability-bar">
+                    <div class="probability-fill" style="width: {{ prob }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // Update is_weekend based on day_of_week
+        function updateWeekend() {
+            const dayOfWeek = parseInt(document.getElementById('day_of_week').value);
+            if (dayOfWeek >= 5) {  // Saturday or Sunday
+                document.getElementById('is_weekend').value = '1';
+            } else {
+                document.getElementById('is_weekend').value = '0';
+            }
+        }
+        
+        // Update is_rush_hour based on hour
+        function updateRushHour() {
+            const hour = parseInt(document.getElementById('hour').value);
+            if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) {
+                document.getElementById('is_rush_hour').value = '1';
+            } else {
+                document.getElementById('is_rush_hour').value = '0';
+            }
+        }
+        
+        // Initialize values when page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            updateWeekend();
+            updateRushHour();
+        });
+    </script>
+</body>
+</html>

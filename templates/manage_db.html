@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Database | TrafficWatch</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-blue: #1a5f7a;
+        --light-blue: #57c5e0;
+        --accent-red: #e63946;
+        --accent-yellow: #ffb703;
+        --white: #ffffff;
+        --light-gray: #f8f9fa;
+        --dark-text: #2c3e50;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: var(--light-gray);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      nav {
+        background: var(--primary-blue);
+        padding: 1rem 2rem;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo::before {
+        content: "🚦";
+        margin-right: 8px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: var(--white);
+        text-decoration: none;
+        transition: all 0.3s;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover,
+      .nav-links .active-link {
+        background-color: var(--light-blue);
+        transform: translateY(-2px);
+      }
+
+      .burger {
+        display: none;
+        cursor: pointer;
+        color: var(--white);
+        font-size: 1.5rem;
+      }
+
+      .hero {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue),
+          var(--light-blue)
+        );
+        color: var(--white);
+        padding: 10rem 2rem 6rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background-color: var(--light-gray);
+        clip-path: ellipse(50% 50% at 50% 100%);
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .content {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 2rem;
+        flex: 1;
+      }
+
+      .content h2 {
+        color: var(--dark-text);
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .content p {
+        color: #666;
+        line-height: 1.6;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+        background-color: var(--white);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      th,
+      td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: var(--primary-blue);
+        color: var(--white);
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .action-button {
+        padding: 0.3rem 0.7rem;
+        background-color: var(--accent-red);
+        color: var(--white);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      .action-button:hover {
+        background-color: #c53030;
+      }
+
+      .form-container {
+        background-color: var(--white);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+      }
+      .form-container h3 {
+        color: var(--dark-text);
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--dark-text);
+        font-weight: 500;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .submit-button {
+        background-color: var(--primary-blue);
+        color: var(--white);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        width: 100%;
+      }
+      .submit-button:hover {
+        background-color: var(--light-blue);
+      }
+
+      .flash-messages {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 1rem;
+      }
+      .flash-messages li {
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        border-radius: 5px;
+        color: var(--white);
+      }
+      .flash-messages li {
+        /* Default flash style (e.g., for success) */
+        background-color: var(--light-blue);
+      }
+      /* Add more specific styles for error flashes if needed */
+      .flash-messages li.error {
+        /* Example for error messages */
+        background-color: var(--accent-red);
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+          width: 100%;
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: var(--primary-blue);
+          padding: 1rem;
+          gap: 0.5rem;
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        .nav-links.active {
+          display: flex;
+        }
+        .nav-links a {
+          width: 100%;
+          padding: 0.8rem;
+          border-radius: 5px;
+        }
+        .burger {
+          display: block;
+        }
+        .hero {
+          padding-top: 7rem;
+        }
+        .hero h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav>
+      <div class="nav-container">
+        <a href="{{ url_for('home') }}" class="logo">TrafficWatch</a>
+        <div class="nav-links" id="navLinks">
+          <a href="{{ url_for('home') }}">Home</a>
+          <a href="{{ url_for('about') }}">About</a>
+          <a href="{{ url_for('data') }}">Data</a>
+          {% if current_user.is_authenticated %}
+          <a href="{{ url_for('predict_tool') }}">Traffic Prediction Tool</a>
+          {% if current_user.username == 'admin' %}
+          <a href="{{ url_for('manage_db') }}" class="active-link">Manage DB</a>
+          {% endif %}
+          <a href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+          <a href="{{ url_for('login') }}">Login</a>
+          <a href="{{ url_for('signup') }}">Sign Up</a>
+          {% endif %}
+        </div>
+        <div class="burger" id="burgerMenu">☰</div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Database Management</h1>
+    </section>
+
+    <!-- Main Content -->
+    <main class="content">
+      <h2>Admin Dashboard</h2>
+      <p>Manage user accounts for the TrafficWatch application.</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <ul class="flash-messages">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+
+      <div class="form-container">
+        <h3>Add New User</h3>
+        <form action="{{ url_for('add_user_admin') }}" method="post">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+          </div>
+          <button type="submit" class="submit-button">Add User</button>
+        </form>
+      </div>
+
+      <h3>Existing Users</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              {% if user.username != 'admin' %}
+              <form
+                action="{{ url_for('delete_user_admin', user_id=user.id) }}"
+                method="post"
+                style="display: inline"
+              >
+                <button
+                  type="submit"
+                  class="action-button"
+                  onclick="return confirm('Are you sure you want to delete this user?');"
+                >
+                  Delete
+                </button>
+              </form>
+              {% else %} N/A {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="4">No users found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2023 Traffic Incident Research. All rights reserved.</p>
+    </footer>
+
+    <script>
+      const burgerMenu = document.getElementById("burgerMenu");
+      const navLinks = document.getElementById("navLinks");
+
+      burgerMenu.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+      });
+
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", () => {
+          // Optional: Close burger menu when a link is clicked
+          // if (navLinks.classList.contains('active')) {
+          //   navLinks.classList.remove("active");
+          // }
+        });
+      });
+    </script>
+  </body>
+</html>

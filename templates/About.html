@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Our Team | TrafficWatch</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-blue: #1a5f7a;
+        --light-blue: #57c5e0;
+        --accent-red: #e63946;
+        --accent-yellow: #ffb703;
+        --white: #ffffff;
+        --light-gray: #f8f9fa;
+        --dark-text: #2c3e50;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: var(--light-gray);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Navbar Styles */
+      nav {
+        background: var(--primary-blue);
+        padding: 1rem 2rem;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo::before {
+        content: "🚦";
+        margin-right: 8px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: var(--white);
+        text-decoration: none;
+        transition: all 0.3s;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover {
+        background-color: var(--light-blue);
+        transform: translateY(-2px);
+      }
+
+      .burger {
+        display: none;
+        cursor: pointer;
+        color: var(--white);
+        font-size: 1.5rem;
+      }
+
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue),
+          var(--light-blue)
+        );
+        color: var(--white);
+        padding: 10rem 2rem 6rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background-color: var(--light-gray);
+        clip-path: ellipse(50% 50% at 50% 100%);
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+      }
+
+      /* Content Section */
+      .content {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 2rem;
+        flex: 1; /* Make content area grow to fill available space */
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(
+          3,
+          1fr
+        ); /* Changed to exactly 3 columns */
+        gap: 2rem;
+        padding: 2rem 0;
+        max-width: 1000px; /* Limit the max width to ensure proper spacing */
+        margin: 0 auto; /* Center the grid container */
+        justify-content: center;
+      }
+
+      /* Add responsive behavior */
+      @media (max-width: 992px) {
+        .grid-container {
+          grid-template-columns: repeat(
+            2,
+            1fr
+          ); /* 2 columns on medium screens */
+        }
+      }
+
+      @media (max-width: 576px) {
+        .grid-container {
+          grid-template-columns: 1fr; /* Single column on small screens */
+        }
+      }
+
+      .team-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top: 4px solid var(--primary-blue);
+      }
+
+      .team-card:nth-child(2) {
+        border-top-color: var(--accent-red);
+      }
+
+      .team-card:nth-child(3) {
+        border-top-color: var(--accent-yellow);
+      }
+
+      .team-card:nth-child(4) {
+        border-top-color: var(--primary-blue);
+      }
+
+      .team-card:nth-child(5) {
+        border-top-color: var(--accent-red);
+      }
+
+      .team-card:nth-child(6) {
+        border-top-color: var(--accent-yellow);
+      }
+
+      .team-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .team-card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        border: 3px solid var(--light-blue);
+      }
+
+      .team-card a {
+        color: var(--dark-text);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+        transition: color 0.3s;
+      }
+
+      .team-card a:hover {
+        color: var(--primary-blue);
+      }
+
+      .team-card p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--primary-blue);
+        color: var(--white);
+        text-align: center;
+        padding: 1.5rem;
+        width: 100%;
+        margin-top: auto; /* Push footer to bottom when content is short */
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+          width: 100%;
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: var(--primary-blue);
+          padding: 1rem;
+          gap: 0.5rem;
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        .nav-links a {
+          width: 100%;
+          padding: 0.8rem;
+          border-radius: 5px;
+        }
+
+        .burger {
+          display: block;
+        }
+
+        .hero {
+          padding-top: 7rem;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav>
+      <div class="nav-container">
+        <a href="{{ url_for('home') }}" class="logo">TrafficWatch</a>
+        <div class="nav-links" id="navLinks">
+          <a href="{{ url_for('home') }}">Home</a>
+          <a
+            href="{{ url_for('about') }}"
+            style="background-color: var(--light-blue)"
+            >About</a
+          >
+          <a href="{{ url_for('data') }}">Data</a>
+          {% if current_user.is_authenticated %}
+          <a href="{{ url_for('predict_tool') }}" class="action-button"
+            >Traffic Prediction Tool</a
+          >
+          {% if current_user.username == 'admin' %}
+          <a href="{{ url_for('manage_db') }}">Manage DB</a>
+          {% endif %}
+          <a href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+          <a href="{{ url_for('login') }}">Login</a>
+          <a href="{{ url_for('signup') }}">Sign Up</a>
+          {% endif %}
+        </div>
+        <div class="burger" id="burgerMenu">☰</div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Meet Our Team</h1>
+      <p>
+        The dedicated researchers behind the Traffic Incident Research project
+      </p>
+    </section>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="grid-container">
+        <!-- Team Member 1 -->
+        <div class="team-card">
+          <img
+            src="{{ url_for('static', filename='Pictures/Hernandez.jpg') }}"
+            alt="Picture of Jan Gabriel"
+          />
+          <a href="https://www.facebook.com/jan.gabriel.hernandez.2024"
+            >Jan Gabriel Hernandez</a
+          >
+          <p>Data Analyst</p>
+        </div>
+
+        <!-- Team Member 2 -->
+        <div class="team-card">
+          <img
+            src="{{ url_for('static', filename='Pictures/Majaba.jpg') }}"
+            alt="Picture of Miel Angelus"
+          />
+          <a href="https://www.facebook.com/mielangelus.majaba/"
+            >Miel Angelus Majaba</a
+          >
+          <p>Research Lead</p>
+        </div>
+
+        <!-- Team Member 3 -->
+        <div class="team-card">
+          <img
+            src="{{ url_for('static', filename='Pictures/Rubio.jpg') }}"
+            alt="Picture of Rubio"
+          />
+          <a href="https://www.facebook.com/reymark.rubs1254">Rey Mark Rubio</a>
+          <p>Data Engineer</p>
+        </div>
+
+        <!-- Team Member 4 -->
+        <div class="team-card">
+          <img
+            src="{{ url_for('static', filename='Pictures/Esperida.jpg') }}"
+            alt="Picture of Justin"
+          />
+          <a href="https://www.facebook.com/justine.esperida.969"
+            >Justin Esperida</a
+          >
+          <p>GIS Specialist</p>
+        </div>
+
+        <!-- Team Member 5 -->
+        <div class="team-card">
+          <img
+            src="{{ url_for('static', filename='Pictures/Lachica.jpg') }}"
+            alt="picture of Vince Jayson"
+          />
+          <a href="https://www.facebook.com/vincejayson.lachica.7"
+            >Vince Jayson Lachica</a
+          >
+          <p>UI/UX Designer</p>
+        </div>
+
+        <!-- Team Member 6 -->
+        <div class="team-card">
+          <img
+            src="{{ url_for('static', filename='Pictures/Torreda.jpg') }}"
+            alt="Picture of Yuan Torreda"
+          />
+          <a href="https://www.facebook.com/zhinewidey">Yuan Torreda</a>
+          <p>Project Coordinator</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2023 Traffic Incident Research. All rights reserved.</p>
+    </footer>
+
+    <script>
+      const burgerMenu = document.getElementById("burgerMenu");
+      const navLinks = document.getElementById("navLinks");
+
+      burgerMenu.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+      });
+
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("active");
+        });
+      });
+    </script>
+  </body>
+</html>
